@@ -1,0 +1,16 @@
+{
+    "workbench.colorCustomizations": {
+        "editor.lineHighlightBorder": "#9D4EDD25",
+        "editorCursor.foreground": "#9D4EDD",
+        "tab.activeBorder": "#9D4EDD35",
+        "tab.activeBorderTop": "#9D4EDD35",
+        "tab.activeBackground": "#140026",
+        "tab.activeForeground": "#2EC4B6",
+        "statusBar.background": "#140026",
+        "statusBar.foreground": "#2EC4B6",
+        "editorIndentGuide.activeBackground1": "#9D4EDD35",
+        "editor.selectionBackground": "#9D4EDD28",
+        "editorBracketHighlight.foreground1": "#9D4EDD",
+        "editorBracketHighlight.foreground2": "#2EC4B6"
+    }
+}
