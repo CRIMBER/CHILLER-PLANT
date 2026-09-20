@@ -1,0 +1,370 @@
+{
+  "dataset_rows_final": 44639,
+  "sampling_interval_minutes": 1.0,
+  "cooling_load_methodology": {
+    "formula": "Q(kW) = Flow(L/s) x 4.186 x DeltaT(C), summed across MainBuilding/Finger/L1-3/T1U risers; RT = Q(kW)/3.517",
+    "risers_used": [
+      "MainBuilding",
+      "Finger",
+      "L1-3",
+      "T1U"
+    ],
+    "unit_assumption": "Flow readings assumed L/s (unverified tag reliability elsewhere in export)",
+    "sanity_check_kw_per_rt_mean": 0.5314790029794858,
+    "label": "ESTIMATED \u2014 not a calibrated meter reading"
+  },
+  "chr_target_column": "CHW-Riser-MainBuilding-ChwRt",
+  "chr_primary_horizon_minutes": 15,
+  "chr_selected_polynomial_degree": 1,
+  "chr_degree_selection_validation_results": {
+    "1": {
+      "MAE": 0.06911566496293742,
+      "RMSE": 0.25053466912054845,
+      "R2": 0.6741140762056239
+    },
+    "2": {
+      "MAE": 0.07902182099253985,
+      "RMSE": 0.28401343721287053,
+      "R2": 0.5811989968885427
+    },
+    "3": {
+      "MAE": 0.22551799409742584,
+      "RMSE": 2.061817152864494,
+      "R2": -21.07141792356916
+    }
+  },
+  "chr_baseline_test_metrics": {
+    "MAE": 0.04759115361625822,
+    "RMSE": 0.11454632569065204,
+    "R2": 0.8887149647434345
+  },
+  "chr_polynomial_test_metrics": {
+    "MAE": 0.0533919714023231,
+    "RMSE": 0.10753533963632163,
+    "R2": 0.9019208114201988
+  },
+  "chr_improved_over_baseline": true,
+  "chr_multi_horizon_results": {
+    "15": {
+      "baseline": {
+        "MAE": 0.04759115361625822,
+        "RMSE": 0.11454632569065204,
+        "R2": 0.8887149647434345
+      },
+      "polyreg": {
+        "MAE": 0.0533919714023231,
+        "RMSE": 0.10753533963632163,
+        "R2": 0.9019208114201988
+      }
+    },
+    "30": {
+      "baseline": {
+        "MAE": 0.06268310911808668,
+        "RMSE": 0.14312156288912797,
+        "R2": 0.8263098712801638
+      },
+      "polyreg": {
+        "MAE": 0.0700362416549781,
+        "RMSE": 0.13417566211721724,
+        "R2": 0.8473444877105609
+      }
+    },
+    "45": {
+      "baseline": {
+        "MAE": 0.07542993868700462,
+        "RMSE": 0.15899113669096096,
+        "R2": 0.785740734048958
+      },
+      "polyreg": {
+        "MAE": 0.08488936846004586,
+        "RMSE": 0.15534618578430281,
+        "R2": 0.7954521245307753
+      }
+    },
+    "60": {
+      "baseline": {
+        "MAE": 0.08813612565445024,
+        "RMSE": 0.1786298303900018,
+        "R2": 0.7296116208202099
+      },
+      "polyreg": {
+        "MAE": 0.09794735780529622,
+        "RMSE": 0.17459489551715063,
+        "R2": 0.7416888602653869
+      }
+    }
+  },
+  "chr_top_model_terms": [
+    {
+      "term": "CHW_DeltaT",
+      "coefficient": 0.525070516998459
+    },
+    {
+      "term": "CHW-Riser-MainBuilding-ChwSt",
+      "coefficient": 0.17727960177760269
+    },
+    {
+      "term": "CHR_lag1",
+      "coefficient": -0.1412531074768466
+    },
+    {
+      "term": "Total_CWP_Power_kW",
+      "coefficient": 0.043931366206784415
+    },
+    {
+      "term": "CHR_lag10",
+      "coefficient": 0.02986460516984474
+    },
+    {
+      "term": "CW_DeltaT",
+      "coefficient": 0.021381408317907052
+    },
+    {
+      "term": "Total_CT_Power_kW",
+      "coefficient": 0.017591315652494697
+    },
+    {
+      "term": "Running_Chillers",
+      "coefficient": -0.013258552670028085
+    },
+    {
+      "term": "IsWeekend",
+      "coefficient": 0.009257196850265171
+    },
+    {
+      "term": "Hour",
+      "coefficient": 0.007371370581911177
+    },
+    {
+      "term": "Total_CHWP_Power_kW",
+      "coefficient": -0.00492572492308737
+    },
+    {
+      "term": "CHR_lag15",
+      "coefficient": -0.0038800748597684794
+    }
+  ],
+  "load_target_column": "Estimated_Cooling_Load_RT",
+  "load_primary_horizon_minutes": 15,
+  "load_selected_polynomial_degree": 1,
+  "load_degree_selection_validation_results": {
+    "1": {
+      "MAE": 25.133987097086678,
+      "RMSE": 96.72045004359305,
+      "R2": 0.7510548790761726
+    },
+    "2": {
+      "MAE": 31.296839594331217,
+      "RMSE": 109.96062941770168,
+      "R2": 0.6782330485473419
+    },
+    "3": {
+      "MAE": 196.0212660030028,
+      "RMSE": 4372.345453755602,
+      "R2": -507.7400602742541
+    }
+  },
+  "load_baseline_test_metrics": {
+    "MAE": 24.7049177657118,
+    "RMSE": 78.88883193569966,
+    "R2": 0.7759478379600774
+  },
+  "load_polynomial_test_metrics": {
+    "MAE": 22.919720921368825,
+    "RMSE": 62.13276022758155,
+    "R2": 0.8610177358490751
+  },
+  "load_improved_over_baseline": true,
+  "load_multi_horizon_results": {
+    "15": {
+      "baseline": {
+        "MAE": 24.7049177657118,
+        "RMSE": 78.88883193569966,
+        "R2": 0.7759478379600774
+      },
+      "polyreg": {
+        "MAE": 22.919720921368825,
+        "RMSE": 62.13276022758155,
+        "R2": 0.8610177358490751
+      }
+    },
+    "30": {
+      "baseline": {
+        "MAE": 35.28178370954149,
+        "RMSE": 93.1814137255323,
+        "R2": 0.687494356646219
+      },
+      "polyreg": {
+        "MAE": 29.524596412840694,
+        "RMSE": 68.44479429418243,
+        "R2": 0.831391245907029
+      }
+    },
+    "45": {
+      "baseline": {
+        "MAE": 43.313918447529474,
+        "RMSE": 92.6768521852559,
+        "R2": 0.6910003173592736
+      },
+      "polyreg": {
+        "MAE": 35.11577279527466,
+        "RMSE": 72.25228977321497,
+        "R2": 0.8121899991065625
+      }
+    },
+    "60": {
+      "baseline": {
+        "MAE": 51.21359583021585,
+        "RMSE": 97.78462830710474,
+        "R2": 0.6561011806837218
+      },
+      "polyreg": {
+        "MAE": 40.567168654231025,
+        "RMSE": 75.82577094264758,
+        "R2": 0.7932130272479379
+      }
+    }
+  },
+  "load_top_model_terms": [
+    {
+      "term": "Running_Chillers",
+      "coefficient": -41.67290363966371
+    },
+    {
+      "term": "CW_DeltaT",
+      "coefficient": 40.33779080456173
+    },
+    {
+      "term": "Load_lag1",
+      "coefficient": 36.167117302070814
+    },
+    {
+      "term": "Total_Chiller_Power_kW",
+      "coefficient": 30.658785596125124
+    },
+    {
+      "term": "Total_Plant_Power_kW",
+      "coefficient": 28.155393928147326
+    },
+    {
+      "term": "CHW-Riser-MainBuilding-ChwSt",
+      "coefficient": 25.243418269588265
+    },
+    {
+      "term": "WetBulb_Avg",
+      "coefficient": 24.646646217301537
+    },
+    {
+      "term": "Load_lag5",
+      "coefficient": 24.24802277110027
+    },
+    {
+      "term": "Load_lag10",
+      "coefficient": 18.546812318112508
+    },
+    {
+      "term": "Load_lag15",
+      "coefficient": 16.65858976871253
+    },
+    {
+      "term": "Total_CWP_Power_kW",
+      "coefficient": -8.237365078489333
+    },
+    {
+      "term": "CHW_DeltaT",
+      "coefficient": 7.061385651600134
+    }
+  ],
+  "chiller_config_analysis": {
+    "table": [
+      {
+        "running_chillers": 4,
+        "n_samples": 177,
+        "avg_cooling_load_rt": 2817.4659092536817,
+        "avg_plant_power_kw": 1345.0053107344634,
+        "avg_kw_per_rt": 0.48277950825120985,
+        "std_kw_per_rt": 0.06440159375714025
+      },
+      {
+        "running_chillers": 5,
+        "n_samples": 26984,
+        "avg_cooling_load_rt": 3081.9895100708104,
+        "avg_plant_power_kw": 1533.1051334123927,
+        "avg_kw_per_rt": 0.497327239420674,
+        "std_kw_per_rt": 0.015577903578398604
+      },
+      {
+        "running_chillers": 6,
+        "n_samples": 17375,
+        "avg_cooling_load_rt": 3073.872256124793,
+        "avg_plant_power_kw": 1797.0089956834531,
+        "avg_kw_per_rt": 0.584547989737876,
+        "std_kw_per_rt": 0.013835307456065113
+      },
+      {
+        "running_chillers": 7,
+        "n_samples": 89,
+        "avg_cooling_load_rt": 3213.694446493277,
+        "avg_plant_power_kw": 1893.2508988764048,
+        "avg_kw_per_rt": 0.5915833238764701,
+        "std_kw_per_rt": 0.07407765027420363
+      }
+    ],
+    "bucket_stats": {
+      "4": {
+        "mean_kw_per_rt": 0.48277950825120985,
+        "std_kw_per_rt": 0.06440159375714025
+      },
+      "5": {
+        "mean_kw_per_rt": 0.497327239420674,
+        "std_kw_per_rt": 0.015577903578398604
+      },
+      "6": {
+        "mean_kw_per_rt": 0.584547989737876,
+        "std_kw_per_rt": 0.013835307456065113
+      },
+      "7": {
+        "mean_kw_per_rt": 0.5915833238764701,
+        "std_kw_per_rt": 0.07407765027420363
+      }
+    },
+    "skipped_configs": [
+      0,
+      1,
+      2,
+      3,
+      8
+    ],
+    "skip_reason": "Fewer than 50 samples in the dataset \u2014 not reliable enough to report.",
+    "min_load_filter_rt": 200.0
+  },
+  "plant_intelligence_thresholds": {
+    "config_bucket_stats": {
+      "4": {
+        "mean_kw_per_rt": 0.48277950825120985,
+        "std_kw_per_rt": 0.06440159375714025
+      },
+      "5": {
+        "mean_kw_per_rt": 0.497327239420674,
+        "std_kw_per_rt": 0.015577903578398604
+      },
+      "6": {
+        "mean_kw_per_rt": 0.584547989737876,
+        "std_kw_per_rt": 0.013835307456065113
+      },
+      "7": {
+        "mean_kw_per_rt": 0.5915833238764701,
+        "std_kw_per_rt": 0.07407765027420363
+      }
+    },
+    "load_rising_threshold_rt": 39.14101625248832,
+    "load_high_threshold_rt": 116.71575877395546,
+    "chr_rising_threshold_c": 0.15,
+    "chr_high_risk_threshold_c": 0.4
+  },
+  "split": {
+    "train": 31226,
+    "val": 6691,
+    "test": 6692
+  }
+}
