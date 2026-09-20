@@ -1,0 +1,14 @@
+pandas
+numpy
+scikit-learn
+matplotlib
+streamlit
+openpyxl
+joblib
+scipy
+
+# Deep sequence models (deep_models.py). CPU build is sufficient — this
+# study trains in minutes on CPU and no GPU-specific code is used.
+# On a machine with no CUDA, install the smaller CPU wheel with:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch

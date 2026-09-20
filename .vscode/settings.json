@@ -1,0 +1,22 @@
+{
+    // This project's packages (pandas, numpy, sklearn, streamlit, torch) are
+    // installed in Python 3.9, which is also what `python` resolves to on PATH.
+    // VS Code defaults to 3.12 here, which has none of them -- that mismatch is
+    // what produces "Import could not be resolved" in the Problems panel.
+    "python.defaultInterpreterPath": "C:\\Users\\riyaz\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+    "python.terminal.activateEnvironment": false,
+    "workbench.colorCustomizations": {
+        "editor.lineHighlightBorder": "#FF2D9A25",
+        "editorCursor.foreground": "#FF2D9A",
+        "tab.activeBorder": "#FF2D9A35",
+        "tab.activeBorderTop": "#FF2D9A35",
+        "tab.activeBackground": "#1A0028",
+        "tab.activeForeground": "#FF6EC7",
+        "statusBar.background": "#120020",
+        "statusBar.foreground": "#FF6EC7",
+        "editorIndentGuide.activeBackground1": "#FF2D9A35",
+        "editor.selectionBackground": "#FF2D9A28",
+        "editorBracketHighlight.foreground1": "#FF2D9A",
+        "editorBracketHighlight.foreground2": "#FF6EC7"
+    }
+}

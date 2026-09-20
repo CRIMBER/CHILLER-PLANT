@@ -1,0 +1,800 @@
+{
+  "dataset_rows_final": 44639,
+  "sampling_interval_minutes": 1.0,
+  "cooling_load_methodology": {
+    "formula": "Q(kW) = Flow(L/s) x 4.186 x DeltaT(C), summed across MainBuilding/Finger/L1-3/T1U risers; RT = Q(kW)/3.517",
+    "risers_used": [
+      "MainBuilding",
+      "Finger",
+      "L1-3",
+      "T1U"
+    ],
+    "unit_assumption": "Flow readings assumed L/s (unverified tag reliability elsewhere in export)",
+    "sanity_check_kw_per_rt_mean": 0.5314790029794858,
+    "label": "ESTIMATED \u2014 not a calibrated meter reading"
+  },
+  "chr_target_column": "CHW-Riser-MainBuilding-ChwRt",
+  "chr_primary_horizon_minutes": 15,
+  "chr_forecast_horizon_rows": 15,
+  "chr_random_state": 42,
+  "chr_dev_size": 37917,
+  "chr_test_size": 6692,
+  "chr_dev_date_range": [
+    "2025-12-01 00:15:00",
+    "2025-12-27 08:11:00"
+  ],
+  "chr_test_date_range": [
+    "2025-12-27 08:12:00",
+    "2025-12-31 23:43:00"
+  ],
+  "chr_cv_method": "sklearn.model_selection.TimeSeriesSplit (expanding window, never shuffled)",
+  "chr_cv_n_splits": 10,
+  "chr_max_tractable_poly_terms": 2000,
+  "chr_degrees_tested": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "chr_degree_comparison_table": [
+    {
+      "degree": 1,
+      "n_terms": 18,
+      "status": "ok",
+      "selected": true,
+      "cv_mean_R2": 0.7979918792102281,
+      "cv_std_R2": 0.15958199155207584,
+      "cv_mean_MAE": 0.07237372499651165,
+      "cv_std_MAE": 0.033096362663902555,
+      "cv_mean_RMSE": 0.14672556111591548,
+      "cv_std_RMSE": 0.0719047522372367,
+      "test_R2": 0.9019208114201988,
+      "test_MAE": 0.0533919714023231,
+      "test_RMSE": 0.10753533963632163
+    },
+    {
+      "degree": 2,
+      "n_terms": 171,
+      "status": "ok",
+      "selected": false,
+      "cv_mean_R2": -51.942218790064565,
+      "cv_std_R2": 154.39568938089144,
+      "cv_mean_MAE": 0.5389694395392138,
+      "cv_std_MAE": 1.0840957143171537,
+      "cv_mean_RMSE": 0.8856158271351114,
+      "cv_std_RMSE": 1.7684462561097796,
+      "test_R2": null,
+      "test_MAE": null,
+      "test_RMSE": null
+    },
+    {
+      "degree": 3,
+      "n_terms": 1140,
+      "status": "ok",
+      "selected": false,
+      "cv_mean_R2": -756946.456881917,
+      "cv_std_R2": 2108066.176426214,
+      "cv_mean_MAE": 24.703789079281968,
+      "cv_std_MAE": 39.760112037860516,
+      "cv_mean_RMSE": 100.33852119784599,
+      "cv_std_RMSE": 212.2786549299117,
+      "test_R2": null,
+      "test_MAE": null,
+      "test_RMSE": null
+    },
+    {
+      "degree": 4,
+      "n_terms": 5985,
+      "status": "skipped_intractable",
+      "selected": false,
+      "cv_mean_R2": null,
+      "cv_std_R2": null,
+      "cv_mean_MAE": null,
+      "cv_std_MAE": null,
+      "cv_mean_RMSE": null,
+      "cv_std_RMSE": null,
+      "test_R2": null,
+      "test_MAE": null,
+      "test_RMSE": null
+    },
+    {
+      "degree": 5,
+      "n_terms": 26334,
+      "status": "skipped_intractable",
+      "selected": false,
+      "cv_mean_R2": null,
+      "cv_std_R2": null,
+      "cv_mean_MAE": null,
+      "cv_std_MAE": null,
+      "cv_mean_RMSE": null,
+      "cv_std_RMSE": null,
+      "test_R2": null,
+      "test_MAE": null,
+      "test_RMSE": null
+    }
+  ],
+  "chr_cv_results_by_degree": {
+    "1": {
+      "degree": 1,
+      "n_terms": 18,
+      "status": "ok",
+      "folds": [
+        {
+          "fold": 1,
+          "status": "ok",
+          "n_train": 3447,
+          "n_val": 3447,
+          "MAE": 0.14278790176906286,
+          "RMSE": 0.16354566987248315,
+          "R2": 0.6371972519740832
+        },
+        {
+          "fold": 2,
+          "status": "ok",
+          "n_train": 6894,
+          "n_val": 3447,
+          "MAE": 0.041641076337026135,
+          "RMSE": 0.060902716218112,
+          "R2": 0.9392606114020043
+        },
+        {
+          "fold": 3,
+          "status": "ok",
+          "n_train": 10341,
+          "n_val": 3447,
+          "MAE": 0.10454679513277823,
+          "RMSE": 0.17207509381909597,
+          "R2": 0.879057079370987
+        },
+        {
+          "fold": 4,
+          "status": "ok",
+          "n_train": 13788,
+          "n_val": 3447,
+          "MAE": 0.10087933358140301,
+          "RMSE": 0.19860605842998866,
+          "R2": 0.9109482619779942
+        },
+        {
+          "fold": 5,
+          "status": "ok",
+          "n_train": 17235,
+          "n_val": 3447,
+          "MAE": 0.049179248678699376,
+          "RMSE": 0.08490234053348182,
+          "R2": 0.9283668171189697
+        },
+        {
+          "fold": 6,
+          "status": "ok",
+          "n_train": 20682,
+          "n_val": 3447,
+          "MAE": 0.058043600011654484,
+          "RMSE": 0.12399322132757058,
+          "R2": 0.8173285549732434
+        },
+        {
+          "fold": 7,
+          "status": "ok",
+          "n_train": 24129,
+          "n_val": 3447,
+          "MAE": 0.06646799794675053,
+          "RMSE": 0.1403339480755636,
+          "R2": 0.6629981886983307
+        },
+        {
+          "fold": 8,
+          "status": "ok",
+          "n_train": 27576,
+          "n_val": 3447,
+          "MAE": 0.023647741229749598,
+          "RMSE": 0.032690509206026674,
+          "R2": 0.9515970895281757
+        },
+        {
+          "fold": 9,
+          "status": "ok",
+          "n_train": 31023,
+          "n_val": 3447,
+          "MAE": 0.07121089356237548,
+          "RMSE": 0.20049190049377918,
+          "R2": 0.8157515484947441
+        },
+        {
+          "fold": 10,
+          "status": "ok",
+          "n_train": 34470,
+          "n_val": 3447,
+          "MAE": 0.06533266171561682,
+          "RMSE": 0.2897141531830532,
+          "R2": 0.437413388563749
+        }
+      ],
+      "summary": {
+        "mean_R2": 0.7979918792102281,
+        "std_R2": 0.15958199155207584,
+        "mean_MAE": 0.07237372499651165,
+        "std_MAE": 0.033096362663902555,
+        "mean_RMSE": 0.14672556111591548,
+        "std_RMSE": 0.0719047522372367,
+        "n_folds_ok": 10,
+        "n_folds_total": 10
+      }
+    },
+    "2": {
+      "degree": 2,
+      "n_terms": 171,
+      "status": "ok",
+      "folds": [
+        {
+          "fold": 1,
+          "status": "ok",
+          "n_train": 3447,
+          "n_val": 3447,
+          "MAE": 3.759027565835761,
+          "RMSE": 6.168231175126776,
+          "R2": -515.076105958569
+        },
+        {
+          "fold": 2,
+          "status": "ok",
+          "n_train": 6894,
+          "n_val": 3447,
+          "MAE": 0.608009437982001,
+          "RMSE": 0.7092757696386701,
+          "R2": -7.2381052990049835
+        },
+        {
+          "fold": 3,
+          "status": "ok",
+          "n_train": 10341,
+          "n_val": 3447,
+          "MAE": 0.18096662765025368,
+          "RMSE": 0.27860097463138533,
+          "R2": 0.6829631934078766
+        },
+        {
+          "fold": 4,
+          "status": "ok",
+          "n_train": 13788,
+          "n_val": 3447,
+          "MAE": 0.11834612292599583,
+          "RMSE": 0.20579154833337204,
+          "R2": 0.9043879819858459
+        },
+        {
+          "fold": 5,
+          "status": "ok",
+          "n_train": 17235,
+          "n_val": 3447,
+          "MAE": 0.15632991893966586,
+          "RMSE": 0.17974905771662078,
+          "R2": 0.6789237604398175
+        },
+        {
+          "fold": 6,
+          "status": "ok",
+          "n_train": 20682,
+          "n_val": 3447,
+          "MAE": 0.23572689591936705,
+          "RMSE": 0.4285518352116789,
+          "R2": -1.182134404595054
+        },
+        {
+          "fold": 7,
+          "status": "ok",
+          "n_train": 24129,
+          "n_val": 3447,
+          "MAE": 0.12856983034975353,
+          "RMSE": 0.2544963778409913,
+          "R2": -0.10833222100167106
+        },
+        {
+          "fold": 8,
+          "status": "ok",
+          "n_train": 27576,
+          "n_val": 3447,
+          "MAE": 0.05214945513703862,
+          "RMSE": 0.06128853930333309,
+          "R2": 0.829867749264301
+        },
+        {
+          "fold": 9,
+          "status": "ok",
+          "n_train": 31023,
+          "n_val": 3447,
+          "MAE": 0.08543021477464066,
+          "RMSE": 0.28818623001390753,
+          "R2": 0.619323004680397
+        },
+        {
+          "fold": 10,
+          "status": "ok",
+          "n_train": 34470,
+          "n_val": 3447,
+          "MAE": 0.06513832587766079,
+          "RMSE": 0.2819867635343791,
+          "R2": 0.46702429274679935
+        }
+      ],
+      "summary": {
+        "mean_R2": -51.942218790064565,
+        "std_R2": 154.39568938089144,
+        "mean_MAE": 0.5389694395392138,
+        "std_MAE": 1.0840957143171537,
+        "mean_RMSE": 0.8856158271351114,
+        "std_RMSE": 1.7684462561097796,
+        "n_folds_ok": 10,
+        "n_folds_total": 10
+      }
+    },
+    "3": {
+      "degree": 3,
+      "n_terms": 1140,
+      "status": "ok",
+      "folds": [
+        {
+          "fold": 1,
+          "status": "ok",
+          "n_train": 3447,
+          "n_val": 3447,
+          "MAE": 120.16821329747644,
+          "RMSE": 722.1303823231946,
+          "R2": -7073325.463105219
+        },
+        {
+          "fold": 2,
+          "status": "ok",
+          "n_train": 6894,
+          "n_val": 3447,
+          "MAE": 75.47976394755923,
+          "RMSE": 90.02616774060598,
+          "R2": -132718.46371621345
+        },
+        {
+          "fold": 3,
+          "status": "ok",
+          "n_train": 10341,
+          "n_val": 3447,
+          "MAE": 4.140152503960656,
+          "RMSE": 4.779351930876179,
+          "R2": -92.30017205173975
+        },
+        {
+          "fold": 4,
+          "status": "ok",
+          "n_train": 13788,
+          "n_val": 3447,
+          "MAE": 0.31808058393289557,
+          "RMSE": 0.5340402712191281,
+          "R2": 0.35611926553994466
+        },
+        {
+          "fold": 5,
+          "status": "ok",
+          "n_train": 17235,
+          "n_val": 3447,
+          "MAE": 0.5611560161225323,
+          "RMSE": 0.6766244842097497,
+          "R2": -3.549569891729467
+        },
+        {
+          "fold": 6,
+          "status": "ok",
+          "n_train": 20682,
+          "n_val": 3447,
+          "MAE": 3.6300483054780566,
+          "RMSE": 38.864974709935744,
+          "R2": -17945.98736412498
+        },
+        {
+          "fold": 7,
+          "status": "ok",
+          "n_train": 24129,
+          "n_val": 3447,
+          "MAE": 41.74553250404061,
+          "RMSE": 142.0537824323202,
+          "R2": -345311.54165406857
+        },
+        {
+          "fold": 8,
+          "status": "ok",
+          "n_train": 27576,
+          "n_val": 3447,
+          "MAE": 0.5702206156701269,
+          "RMSE": 0.76313255991451,
+          "R2": -25.37716238158533
+        },
+        {
+          "fold": 9,
+          "status": "ok",
+          "n_train": 31023,
+          "n_val": 3447,
+          "MAE": 0.25579810388984886,
+          "RMSE": 3.0443920939457896,
+          "R2": -41.48262581110407
+        },
+        {
+          "fold": 10,
+          "status": "ok",
+          "n_train": 34470,
+          "n_val": 3447,
+          "MAE": 0.1689249146892933,
+          "RMSE": 0.5123634322381139,
+          "R2": -0.7595686721440786
+        }
+      ],
+      "summary": {
+        "mean_R2": -756946.456881917,
+        "std_R2": 2108066.176426214,
+        "mean_MAE": 24.703789079281968,
+        "std_MAE": 39.760112037860516,
+        "mean_RMSE": 100.33852119784599,
+        "std_RMSE": 212.2786549299117,
+        "n_folds_ok": 10,
+        "n_folds_total": 10
+      }
+    },
+    "4": {
+      "degree": 4,
+      "n_terms": 5985,
+      "status": "skipped_intractable",
+      "reason": "5985 polynomial terms from 17 features exceeds the measured tractability ceiling (2000 terms). Empirically, degree 4 (5,985 terms) took 16s on a ~3,450-row fold and was OOM-killed on a ~34,500-row fold in this environment.",
+      "folds": [],
+      "summary": null
+    },
+    "5": {
+      "degree": 5,
+      "n_terms": 26334,
+      "status": "skipped_intractable",
+      "reason": "26334 polynomial terms from 17 features exceeds the measured tractability ceiling (2000 terms). Empirically, degree 4 (5,985 terms) took 16s on a ~3,450-row fold and was OOM-killed on a ~34,500-row fold in this environment.",
+      "folds": [],
+      "summary": null
+    }
+  },
+  "chr_selected_polynomial_degree": 1,
+  "chr_train_metrics": {
+    "MAE": 0.06053038857330738,
+    "RMSE": 0.1495282186745519,
+    "R2": 0.8897048096033878
+  },
+  "chr_baseline_test_metrics": {
+    "MAE": 0.04759115361625822,
+    "RMSE": 0.11454632569065204,
+    "R2": 0.8887149647434345
+  },
+  "chr_polynomial_test_metrics": {
+    "MAE": 0.0533919714023231,
+    "RMSE": 0.10753533963632163,
+    "R2": 0.9019208114201988
+  },
+  "chr_improved_over_baseline": true,
+  "chr_multi_horizon_results": {
+    "15": {
+      "baseline": {
+        "MAE": 0.04759115361625822,
+        "RMSE": 0.11454632569065204,
+        "R2": 0.8887149647434345
+      },
+      "polyreg": {
+        "MAE": 0.0533919714023231,
+        "RMSE": 0.10753533963632163,
+        "R2": 0.9019208114201988
+      }
+    },
+    "30": {
+      "baseline": {
+        "MAE": 0.06268310911808668,
+        "RMSE": 0.14312156288912797,
+        "R2": 0.8263098712801638
+      },
+      "polyreg": {
+        "MAE": 0.0700362416549781,
+        "RMSE": 0.13417566211721724,
+        "R2": 0.8473444877105609
+      }
+    },
+    "45": {
+      "baseline": {
+        "MAE": 0.07542993868700462,
+        "RMSE": 0.15899113669096096,
+        "R2": 0.785740734048958
+      },
+      "polyreg": {
+        "MAE": 0.08488936846004586,
+        "RMSE": 0.15534618578430281,
+        "R2": 0.7954521245307753
+      }
+    },
+    "60": {
+      "baseline": {
+        "MAE": 0.08813612565445024,
+        "RMSE": 0.1786298303900018,
+        "R2": 0.7296116208202099
+      },
+      "polyreg": {
+        "MAE": 0.09794735780529622,
+        "RMSE": 0.17459489551715063,
+        "R2": 0.7416888602653869
+      }
+    }
+  },
+  "chr_top_model_terms": [
+    {
+      "term": "CHW_DeltaT",
+      "coefficient": 0.525070516998459
+    },
+    {
+      "term": "CHW-Riser-MainBuilding-ChwSt",
+      "coefficient": 0.17727960177760269
+    },
+    {
+      "term": "CHR_lag1",
+      "coefficient": -0.1412531074768466
+    },
+    {
+      "term": "Total_CWP_Power_kW",
+      "coefficient": 0.043931366206784415
+    },
+    {
+      "term": "CHR_lag10",
+      "coefficient": 0.02986460516984474
+    },
+    {
+      "term": "CW_DeltaT",
+      "coefficient": 0.021381408317907052
+    },
+    {
+      "term": "Total_CT_Power_kW",
+      "coefficient": 0.017591315652494697
+    },
+    {
+      "term": "Running_Chillers",
+      "coefficient": -0.013258552670028085
+    },
+    {
+      "term": "IsWeekend",
+      "coefficient": 0.009257196850265171
+    },
+    {
+      "term": "Hour",
+      "coefficient": 0.007371370581911177
+    },
+    {
+      "term": "Total_CHWP_Power_kW",
+      "coefficient": -0.00492572492308737
+    },
+    {
+      "term": "CHR_lag15",
+      "coefficient": -0.0038800748597684794
+    }
+  ],
+  "load_target_column": "Estimated_Cooling_Load_RT",
+  "load_primary_horizon_minutes": 15,
+  "load_selected_polynomial_degree": 1,
+  "load_degree_selection_validation_results": {
+    "1": {
+      "MAE": 25.133987097086678,
+      "RMSE": 96.72045004359305,
+      "R2": 0.7510548790761726
+    },
+    "2": {
+      "MAE": 31.296839594331217,
+      "RMSE": 109.96062941770168,
+      "R2": 0.6782330485473419
+    },
+    "3": {
+      "MAE": 196.0212660030028,
+      "RMSE": 4372.345453755602,
+      "R2": -507.7400602742541
+    }
+  },
+  "load_baseline_test_metrics": {
+    "MAE": 24.7049177657118,
+    "RMSE": 78.88883193569966,
+    "R2": 0.7759478379600774
+  },
+  "load_polynomial_test_metrics": {
+    "MAE": 22.919720921368825,
+    "RMSE": 62.13276022758155,
+    "R2": 0.8610177358490751
+  },
+  "load_improved_over_baseline": true,
+  "load_multi_horizon_results": {
+    "15": {
+      "baseline": {
+        "MAE": 24.7049177657118,
+        "RMSE": 78.88883193569966,
+        "R2": 0.7759478379600774
+      },
+      "polyreg": {
+        "MAE": 22.919720921368825,
+        "RMSE": 62.13276022758155,
+        "R2": 0.8610177358490751
+      }
+    },
+    "30": {
+      "baseline": {
+        "MAE": 35.28178370954149,
+        "RMSE": 93.1814137255323,
+        "R2": 0.687494356646219
+      },
+      "polyreg": {
+        "MAE": 29.524596412840694,
+        "RMSE": 68.44479429418243,
+        "R2": 0.831391245907029
+      }
+    },
+    "45": {
+      "baseline": {
+        "MAE": 43.313918447529474,
+        "RMSE": 92.6768521852559,
+        "R2": 0.6910003173592736
+      },
+      "polyreg": {
+        "MAE": 35.11577279527466,
+        "RMSE": 72.25228977321497,
+        "R2": 0.8121899991065625
+      }
+    },
+    "60": {
+      "baseline": {
+        "MAE": 51.21359583021585,
+        "RMSE": 97.78462830710474,
+        "R2": 0.6561011806837218
+      },
+      "polyreg": {
+        "MAE": 40.567168654231025,
+        "RMSE": 75.82577094264758,
+        "R2": 0.7932130272479379
+      }
+    }
+  },
+  "load_top_model_terms": [
+    {
+      "term": "Running_Chillers",
+      "coefficient": -41.67290363966371
+    },
+    {
+      "term": "CW_DeltaT",
+      "coefficient": 40.33779080456173
+    },
+    {
+      "term": "Load_lag1",
+      "coefficient": 36.167117302070814
+    },
+    {
+      "term": "Total_Chiller_Power_kW",
+      "coefficient": 30.658785596125124
+    },
+    {
+      "term": "Total_Plant_Power_kW",
+      "coefficient": 28.155393928147326
+    },
+    {
+      "term": "CHW-Riser-MainBuilding-ChwSt",
+      "coefficient": 25.243418269588265
+    },
+    {
+      "term": "WetBulb_Avg",
+      "coefficient": 24.646646217301537
+    },
+    {
+      "term": "Load_lag5",
+      "coefficient": 24.24802277110027
+    },
+    {
+      "term": "Load_lag10",
+      "coefficient": 18.546812318112508
+    },
+    {
+      "term": "Load_lag15",
+      "coefficient": 16.65858976871253
+    },
+    {
+      "term": "Total_CWP_Power_kW",
+      "coefficient": -8.237365078489333
+    },
+    {
+      "term": "CHW_DeltaT",
+      "coefficient": 7.061385651600134
+    }
+  ],
+  "chiller_config_analysis": {
+    "table": [
+      {
+        "running_chillers": 4,
+        "n_samples": 177,
+        "avg_cooling_load_rt": 2817.4659092536817,
+        "avg_plant_power_kw": 1345.0053107344634,
+        "avg_kw_per_rt": 0.48277950825120985,
+        "std_kw_per_rt": 0.06440159375714025
+      },
+      {
+        "running_chillers": 5,
+        "n_samples": 26984,
+        "avg_cooling_load_rt": 3081.9895100708104,
+        "avg_plant_power_kw": 1533.1051334123927,
+        "avg_kw_per_rt": 0.497327239420674,
+        "std_kw_per_rt": 0.015577903578398604
+      },
+      {
+        "running_chillers": 6,
+        "n_samples": 17375,
+        "avg_cooling_load_rt": 3073.872256124793,
+        "avg_plant_power_kw": 1797.0089956834531,
+        "avg_kw_per_rt": 0.584547989737876,
+        "std_kw_per_rt": 0.013835307456065113
+      },
+      {
+        "running_chillers": 7,
+        "n_samples": 89,
+        "avg_cooling_load_rt": 3213.694446493277,
+        "avg_plant_power_kw": 1893.2508988764048,
+        "avg_kw_per_rt": 0.5915833238764701,
+        "std_kw_per_rt": 0.07407765027420363
+      }
+    ],
+    "bucket_stats": {
+      "4": {
+        "mean_kw_per_rt": 0.48277950825120985,
+        "std_kw_per_rt": 0.06440159375714025
+      },
+      "5": {
+        "mean_kw_per_rt": 0.497327239420674,
+        "std_kw_per_rt": 0.015577903578398604
+      },
+      "6": {
+        "mean_kw_per_rt": 0.584547989737876,
+        "std_kw_per_rt": 0.013835307456065113
+      },
+      "7": {
+        "mean_kw_per_rt": 0.5915833238764701,
+        "std_kw_per_rt": 0.07407765027420363
+      }
+    },
+    "skipped_configs": [
+      0,
+      1,
+      2,
+      3,
+      8
+    ],
+    "skip_reason": "Fewer than 50 samples in the dataset \u2014 not reliable enough to report.",
+    "min_load_filter_rt": 200.0
+  },
+  "plant_intelligence_thresholds": {
+    "config_bucket_stats": {
+      "4": {
+        "mean_kw_per_rt": 0.48277950825120985,
+        "std_kw_per_rt": 0.06440159375714025
+      },
+      "5": {
+        "mean_kw_per_rt": 0.497327239420674,
+        "std_kw_per_rt": 0.015577903578398604
+      },
+      "6": {
+        "mean_kw_per_rt": 0.584547989737876,
+        "std_kw_per_rt": 0.013835307456065113
+      },
+      "7": {
+        "mean_kw_per_rt": 0.5915833238764701,
+        "std_kw_per_rt": 0.07407765027420363
+      }
+    },
+    "load_rising_threshold_rt": 39.14101625248832,
+    "load_high_threshold_rt": 116.71575877395546,
+    "chr_rising_threshold_c": 0.15,
+    "chr_high_risk_threshold_c": 0.4
+  },
+  "chr_split": {
+    "dev": 37917,
+    "test": 6692
+  },
+  "load_split": {
+    "train": 31226,
+    "val": 6691,
+    "test": 6692
+  }
+}
