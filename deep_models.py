@@ -91,6 +91,29 @@ VAL_FRAC_OF_DEV = 0.15        # chronological tail of Development -> early-stopp
 BATCH_SIZE = 256
 MAX_EPOCHS = 40
 PATIENCE = 6                  # early-stopping patience, in epochs
+
+# Metric used to pick the early-stopping checkpoint. "MAE" by default, and
+# that choice is deliberate rather than cosmetic.
+#
+# The chronological validation window (23-27 Dec) contains plant excursions
+# reaching 8.96 C and 16.01 C, roughly 2 C beyond anything present in either
+# the training or the final-test period. Its standard deviation is actually
+# LOWER than the training window's, so the damage comes from a handful of
+# extreme spikes rather than from general volatility -- even the persistence
+# baseline scores 0.2660 RMSE there versus 0.1146 on the test window.
+#
+# RMSE squares errors, so those few spikes dominate it: selecting on val RMSE
+# made every architecture "best-score" at epoch 1 and then apparently degrade,
+# so early stopping restored a barely-trained network. A barely-trained
+# recurrent model with attention pooling approximates "copy the most recent
+# input", i.e. it collapses onto the persistence baseline -- which is exactly
+# what was observed before this was changed.
+#
+# MAE does not square errors, so an unrepresentative handful of excursions
+# cannot dominate the selection criterion. The chronological, leakage-safe
+# split is unchanged: validation still strictly precedes test, and the test
+# set is still evaluated exactly once.
+EARLY_STOP_METRIC = "MAE"     # "MAE" (robust, default) or "RMSE"
 LEARNING_RATE = 1e-3
 WEIGHT_DECAY = 1e-5
 GRAD_CLIP = 1.0
@@ -390,9 +413,11 @@ def predict(model, X: torch.Tensor, batch_size: int = 1024, want_attention: bool
 
 def train_model(name, model_cls, Xtr, ytr, Xva, yva, y_mean, y_std, verbose=True):
     """
-    Trains one architecture with Adam + early stopping on validation RMSE
-    (in ORIGINAL units, so the number is directly comparable to every
-    other model in the study and to the polynomial baseline).
+    Trains one architecture with Adam + early stopping on the validation
+    metric named by EARLY_STOP_METRIC, computed in ORIGINAL units so the
+    number is directly comparable to every other model in the study and to
+    the polynomial baseline. See the EARLY_STOP_METRIC comment for why the
+    default is MAE rather than RMSE on this particular dataset.
     """
     set_seed(RANDOM_STATE)
     model = model_cls(Xtr.shape[-1]).to(DEVICE)
@@ -406,7 +431,8 @@ def train_model(name, model_cls, Xtr, ytr, Xva, yva, y_mean, y_std, verbose=True
     ytr_t = torch.from_numpy(((ytr - y_mean) / y_std).astype(np.float32))
     Xva_t = torch.from_numpy(Xva)
 
-    best_rmse, best_state, best_epoch, bad_epochs = np.inf, None, 0, 0
+    best_score, best_state, best_epoch, bad_epochs = np.inf, None, 0, 0
+    best_rmse, best_mae = np.inf, np.inf
     history = []
     t0 = time.time()
 
@@ -435,15 +461,18 @@ def train_model(name, model_cls, Xtr, ytr, Xva, yva, y_mean, y_std, verbose=True
             "val_MAE": val_mae,
         })
 
-        if val_rmse < best_rmse - 1e-6:
-            best_rmse, best_epoch, bad_epochs = val_rmse, epoch, 0
+        score = val_mae if EARLY_STOP_METRIC == "MAE" else val_rmse
+        if score < best_score - 1e-7:
+            best_score, best_epoch, bad_epochs = score, epoch, 0
+            best_rmse, best_mae = val_rmse, val_mae
             best_state = {k: v.detach().clone() for k, v in model.state_dict().items()}
         else:
             bad_epochs += 1
 
         if verbose and (epoch == 1 or epoch % 5 == 0 or bad_epochs >= PATIENCE):
             print(f"      epoch {epoch:>3}/{MAX_EPOCHS}  train_mse={history[-1]['train_loss_scaled']:.5f}  "
-                  f"val_RMSE={val_rmse:.5f}  (best {best_rmse:.5f} @ {best_epoch})")
+                  f"val_MAE={val_mae:.5f}  val_RMSE={val_rmse:.5f}  "
+                  f"(best {EARLY_STOP_METRIC}={best_score:.5f} @ {best_epoch})")
 
         if bad_epochs >= PATIENCE:
             if verbose:
@@ -460,6 +489,8 @@ def train_model(name, model_cls, Xtr, ytr, Xva, yva, y_mean, y_std, verbose=True
         "history": history,
         "best_epoch": best_epoch,
         "best_val_RMSE": float(best_rmse),
+        "best_val_MAE": float(best_mae),
+        "early_stop_metric": EARLY_STOP_METRIC,
         "epochs_run": len(history),
         "train_seconds": float(time.time() - t0),
     }
@@ -895,6 +926,12 @@ def main():
             "weight_decay": WEIGHT_DECAY, "max_epochs": MAX_EPOCHS, "patience": PATIENCE,
             "grad_clip": GRAD_CLIP, "optimizer": "Adam", "loss": "MSE",
             "random_state": RANDOM_STATE,
+            "early_stop_metric": EARLY_STOP_METRIC,
+            "early_stop_metric_rationale": (
+                "Validation window (23-27 Dec) contains excursions ~2 C beyond train/test "
+                "range; RMSE squares them and dominated selection, stopping every model at "
+                "epoch 1. MAE is robust to those spikes. Split is unchanged."
+            ),
         },
         "split": {"train": len(Xtr), "val": len(Xva), "test": len(Xte), "dev_frac": DEV_FRAC},
         "test_date_range": [str(pd.Timestamp(test_ts[0])), str(pd.Timestamp(test_ts[-1]))],
