@@ -249,15 +249,29 @@ def try_load_and_prepare_data(_chr_features, _load_features):
     return df
 
 
-@st.cache_resource
-def try_load_deep_artifact():
-    """Deep-model results are optional: the dashboard works without them."""
-    if not os.path.exists(DEEP_ARTIFACT_PATH):
+@st.cache_resource(show_spinner=False)
+def _load_deep_artifact(mtime):
+    """
+    `mtime` is deliberately part of the cache key (no leading underscore, so
+    Streamlit hashes it). Without it, a miss while deep_models.py is still
+    running would cache None forever, and the Deep Learning / Explainable AI
+    tabs would keep reporting "not found" even after training finished --
+    looking like a failed run when the artifact is actually on disk.
+    Passing the mtime (None when absent) invalidates the cache the moment the
+    file appears or is regenerated.
+    """
+    if mtime is None:
         return None
     try:
         return joblib.load(DEEP_ARTIFACT_PATH)
     except Exception:
         return None
+
+
+def try_load_deep_artifact():
+    """Deep-model results are optional: the dashboard works without them."""
+    mtime = os.path.getmtime(DEEP_ARTIFACT_PATH) if os.path.exists(DEEP_ARTIFACT_PATH) else None
+    return _load_deep_artifact(mtime)
 
 
 CHILLER_POWER_COLS = {
