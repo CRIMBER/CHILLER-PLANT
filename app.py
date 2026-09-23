@@ -59,6 +59,7 @@ from train import (
 # numpy/dict data, so it loads with joblib alone.
 DEEP_ARTIFACT_PATH = "deep_artifact.pkl"
 DEEP_METRICS_PATH = "metrics_deep.json"
+CMP_ARTIFACT_PATH = "comparison_artifact.pkl"
 
 # ---------------------------------------------------------------------------
 # PAGE CONFIG + THEME
@@ -274,6 +275,23 @@ def try_load_deep_artifact():
     return _load_deep_artifact(mtime)
 
 
+@st.cache_resource(show_spinner=False)
+def _load_cmp_artifact(mtime):
+    """Same mtime-keyed cache as the deep artifact, for the same reason."""
+    if mtime is None:
+        return None
+    try:
+        return joblib.load(CMP_ARTIFACT_PATH)
+    except Exception:
+        return None
+
+
+def try_load_cmp_artifact():
+    """Comparison + SHAP results are optional."""
+    mtime = os.path.getmtime(CMP_ARTIFACT_PATH) if os.path.exists(CMP_ARTIFACT_PATH) else None
+    return _load_cmp_artifact(mtime)
+
+
 CHILLER_POWER_COLS = {
     1: ("DPM-CH-1-CP-1-kW", "DPM-CH-1-CP-2-kW"), 2: ("DPM-CH-2-CP-1-kW", "DPM-CH-2-CP-2-kW"),
     3: ("DPM-CH-3-CP-1-kW", "DPM-CH-3-CP-2-kW"), 4: ("DPM_CH-4-CP-1-kW", "DPM-CH-4-CP-2-kW"),
@@ -366,14 +384,15 @@ with st.sidebar:
 # TABS
 # ---------------------------------------------------------------------------
 deep_artifact = try_load_deep_artifact()
+cmp_artifact = try_load_cmp_artifact()
 
 tabs = st.tabs([
     "Overview", "Interactive Prediction", "Polynomial Regression", "Training & Testing",
     "Cross Validation", "Error Analysis", "Experiment Results", "Deep Learning",
-    "Explainable AI", "Model Information", "Plant Performance",
+    "Model Comparison", "Explainable AI", "SHAP", "Model Information", "Plant Performance",
 ])
 (tab_overview, tab_predict, tab_poly, tab_traintest, tab_cv, tab_error, tab_exp,
- tab_deep, tab_xai, tab_info, tab_plant) = tabs
+ tab_deep, tab_compare, tab_xai, tab_shap, tab_info, tab_plant) = tabs
 
 # ================================================================ OVERVIEW
 with tab_overview:
@@ -1054,3 +1073,227 @@ actually measures.
         st.dataframe(agree_df.round(2), width='stretch')
         st.caption("Importance *rank* per architecture (1 = most important). Consistently low rows are "
                    "the channels every architecture independently found predictive.")
+
+# ========================================================= MODEL COMPARISON
+with tab_compare:
+    st.markdown('<div class="section-label">Head-to-Head Model Comparison</div>', unsafe_allow_html=True)
+    if cmp_artifact is None:
+        st.info("Comparison results not found. Run `python comparison_xai.py` to generate this section.")
+    else:
+        ca = cmp_artifact
+        models = ca["compare_models"]
+        st.markdown(f"""
+**Random Forest**, **LSTM** and **BiLSTM** compared on the *same* forecasting task:
+CHR {ca['horizon_minutes']} minutes ahead from a {ca['seq_len']}-timestep lookback window.
+
+All three are selected on the same criterion (**{ca['selection_criterion']}**), trained on the same
+chronological split, and scored once on the same {ca['split']['test']:,} final-test windows
+({ca['test_date_range'][0]} to {ca['test_date_range'][1]}). Random Forest receives the identical
+information as the sequence models — the window flattened to
+{ca['seq_len']}x{len(ca['feature_cols'])} = {ca['seq_len']*len(ca['feature_cols'])} features — so no model
+is handicapped by a different feature set.
+""")
+
+        # ---- leaderboard ----
+        rows = []
+        for m in models:
+            mm = ca["metrics"][m]
+            rows.append({"Model": m, "MAE (°C)": mm["MAE"], "RMSE (°C)": mm["RMSE"], "R²": mm["R2"],
+                         "MedAE (°C)": mm["MedAE"], "P90 AE (°C)": mm["P90AE"], "Bias (°C)": mm["Bias"]})
+        for ref, label in [("baseline_metrics", "Persistence"), ("poly_metrics", "PolyReg degree 1")]:
+            if ca.get(ref):
+                mm = ca[ref]
+                rows.append({"Model": label, "MAE (°C)": mm["MAE"], "RMSE (°C)": mm["RMSE"], "R²": mm["R2"],
+                             "MedAE (°C)": mm["MedAE"], "P90 AE (°C)": mm["P90AE"], "Bias (°C)": mm["Bias"]})
+        st.dataframe(pd.DataFrame(rows).round(4), hide_index=True, width='stretch')
+        st.caption("Lower is better for every column except R². MedAE and P90 AE describe the middle and "
+                   "the tail of the error distribution — a model can win the mean and lose the tail.")
+
+        # ---- pick models to compare ----
+        st.markdown('<div class="section-label">Compare Models Directly</div>', unsafe_allow_html=True)
+        chosen = st.multiselect("Select two or three models", options=models, default=models,
+                                key="cmp_pick")
+        if len(chosen) < 2:
+            st.warning("Select at least two models to compare.")
+        else:
+            metric_keys = [("RMSE", "RMSE (°C)"), ("MAE", "MAE (°C)"), ("MedAE", "MedAE (°C)"),
+                           ("P90AE", "P90 AE (°C)"), ("R2", "R²")]
+            grid = []
+            for key, label in metric_keys:
+                row = {"Metric": label}
+                vals = {m: ca["metrics"][m][key] for m in chosen}
+                best = max(vals, key=vals.get) if key == "R2" else min(vals, key=vals.get)
+                for m in chosen:
+                    row[m] = vals[m]
+                row["Best"] = best
+                grid.append(row)
+            st.dataframe(pd.DataFrame(grid).round(4), hide_index=True, width='stretch')
+
+            # pairwise verdicts among the chosen models
+            st.markdown("**Pairwise verdicts (significance-tested)**")
+            shown = 0
+            for rec in ca["pairwise"]:
+                if rec["model_a"] in chosen and rec["model_b"] in chosen:
+                    shown += 1
+                    bs = rec["bootstrap_RMSE"]
+                    dm_sq = rec["dm_tests"]["squared"]
+                    verdict = rec["verdict"]
+                    if "no significant" in verdict:
+                        st.info(f"**{rec['model_a']} vs {rec['model_b']}** — {verdict}. "
+                                f"ΔRMSE = {bs['observed_diff']:+.5f} °C, "
+                                f"95% CI [{bs['ci_low']:+.5f}, {bs['ci_high']:+.5f}] includes zero.")
+                    else:
+                        st.success(f"**{rec['model_a']} vs {rec['model_b']}** — {verdict}. "
+                                   f"ΔRMSE = {bs['observed_diff']:+.5f} °C, "
+                                   f"95% CI [{bs['ci_low']:+.5f}, {bs['ci_high']:+.5f}] excludes zero "
+                                   f"(DM p = {dm_sq['p_value']:.2e}).")
+            if shown == 0:
+                st.caption("No pairwise record for that selection.")
+
+        # ---- full pairwise table ----
+        st.markdown('<div class="section-label">Full Pairwise Table</div>', unsafe_allow_html=True)
+        flat = []
+        for rec in ca["pairwise"]:
+            for key, d in rec["per_metric"].items():
+                flat.append({
+                    "A": rec["model_a"], "B": rec["model_b"], "Metric": key,
+                    "A value": d["value_a"], "B value": d["value_b"], "Winner": d["winner"],
+                    "Abs diff": d["abs_diff"], "% better": d["pct_improvement"],
+                    "Significant": "yes" if d["significant"] else "no",
+                    "Test": d["significance_source"],
+                })
+        st.dataframe(pd.DataFrame(flat).round(5), hide_index=True, width='stretch')
+        st.caption("Every pair on every metric. 'Significant' comes from the Diebold-Mariano test under "
+                   "the loss matching each metric (squared loss for RMSE/R², absolute loss for the "
+                   "MAE family) — a numerically larger value that is not significant is not a win.")
+
+        # ---- figures ----
+        st.markdown('<div class="section-label">Performance</div>', unsafe_allow_html=True)
+        show_plot("plot_cmp_metric_bars.png")
+        c1, c2 = st.columns(2)
+        with c1:
+            show_plot("plot_cmp_error_violin.png",
+                      "Distribution shape, not just the mean — two models with equal MAE can have very "
+                      "different tails.")
+        with c2:
+            show_plot("plot_cmp_error_ecdf.png",
+                      "Reads as an operational tolerance curve. Where curves cross, one model is better "
+                      "for small errors and another in the tail.")
+
+        st.markdown('<div class="section-label">Statistical Significance</div>', unsafe_allow_html=True)
+        show_plot("plot_cmp_significance.png",
+                  "Effect size with uncertainty. An interval crossing zero means the difference is not "
+                  "distinguishable from noise at this sample size.")
+        c3, c4 = st.columns(2)
+        with c3:
+            show_plot("plot_cmp_win_matrix.png")
+        with c4:
+            show_plot("plot_cmp_radar.png")
+
+        st.markdown('<div class="section-label">Forecast Behaviour</div>', unsafe_allow_html=True)
+        show_plot("plot_cmp_forecast_trace.png")
+        show_plot("plot_cmp_scatter_panels.png")
+
+        with st.expander("Statistical methodology"):
+            sn = ca["statistics_note"]
+            st.markdown(f"""
+**Diebold-Mariano test** — {sn['dm_test']}
+
+**Bootstrap** — {sn['bootstrap']}
+
+**Why both** — {sn['why']}
+
+The null hypothesis is equal predictive accuracy. A negative DM statistic means the first model has
+lower loss. Significance is reported at α = 0.05, two-sided.
+
+**Model configuration**
+""")
+            det = []
+            for m in models:
+                d = ca["model_details"][m]
+                det.append({"Model": m, "Parameters / nodes": d.get("n_params"),
+                            "Validation MAE": round(d.get("val_MAE"), 5) if d.get("val_MAE") else None,
+                            "Detail": str(d.get("config") or f"best epoch {d.get('best_epoch')} of {d.get('epochs_run')}")})
+            st.dataframe(pd.DataFrame(det), hide_index=True, width='stretch')
+
+# ========================================================= SHAP
+with tab_shap:
+    st.markdown('<div class="section-label">SHAP Explainability</div>', unsafe_allow_html=True)
+    sh = (cmp_artifact or {}).get("shap")
+    if not sh or not sh.get("available"):
+        reason = (sh or {}).get("reason", "not generated yet")
+        st.info(f"SHAP results not available ({reason}). Run `python comparison_xai.py`.")
+    else:
+        st.markdown(f"""
+The **{sh['model']}** is explained with SHAP (SHapley Additive exPlanations). SHAP assigns each input a
+contribution to each individual forecast, with the guarantee that those contributions plus a base value
+reconstruct the prediction exactly — so the explanation is an exact decomposition, not an approximation
+of one.
+
+Values below are in **{sh['units']}**. {sh['n_explained']} test windows explained against
+{sh['n_background']} background windows, {sh['nsamples']} expected-gradient draws each.
+""")
+        scol1, scol2, scol3 = st.columns(3)
+        metric_card("Base value", f"{sh['base_value']:.3f}", " °C", scol1)
+        metric_card("Windows explained", f"{sh['n_explained']}", "", scol2)
+        metric_card("Top channel", sh["ranking"][0], "", scol3)
+
+        st.markdown('<div class="section-label">Global Importance</div>', unsafe_allow_html=True)
+        g1, g2 = st.columns(2)
+        with g1:
+            show_plot("plot_shap_bar.png", "Mean |SHAP| per channel — overall influence on the forecast.")
+        with g2:
+            show_plot("plot_shap_beeswarm.png",
+                      "Each dot is one forecast. Position = contribution, colour = the channel's value. "
+                      "This is the canonical SHAP summary plot.")
+
+        rank_df = pd.DataFrame({
+            "Rank": range(1, len(sh["ranking"]) + 1),
+            "Channel": sh["ranking"],
+            "Mean |SHAP| (°C)": [sh["mean_abs_shap"][sh["feature_names"].index(c)] for c in sh["ranking"]],
+        })
+        st.dataframe(rank_df.round(5), hide_index=True, width='stretch')
+
+        st.markdown('<div class="section-label">Distribution</div>', unsafe_allow_html=True)
+        v1, v2 = st.columns(2)
+        with v1:
+            show_plot("plot_shap_violin.png", "Spread of each channel's contribution across forecasts.")
+        with v2:
+            show_plot("plot_shap_layered_violin.png",
+                      "Layered by feature value — shows whether high or low readings push the forecast up.")
+
+        st.markdown('<div class="section-label">Interaction & Structure</div>', unsafe_allow_html=True)
+        show_plot("plot_shap_heatmap.png",
+                  "Instances clustered by explanation pattern — reveals distinct operating regimes where "
+                  "the model reasons differently.")
+        dep_plots = [p for p in sh.get("plots", []) if "dependence" in p]
+        if dep_plots:
+            st.markdown("**Dependence plots — how contribution varies with the channel's own value**")
+            dcols = st.columns(min(2, len(dep_plots)))
+            for i, p in enumerate(dep_plots):
+                with dcols[i % len(dcols)]:
+                    show_plot(p)
+
+        st.markdown('<div class="section-label">Single-Forecast Decomposition</div>', unsafe_allow_html=True)
+        st.caption("One forecast taken apart channel by channel. The force plot shows contributions pushing "
+                   "the prediction above or below the base value; the waterfall shows the same additively.")
+        show_plot("plot_shap_force_single.png")
+        show_plot("plot_shap_waterfall.png")
+
+        st.markdown('<div class="section-label">Temporal Attribution</div>', unsafe_allow_html=True)
+        show_plot("plot_shap_temporal.png",
+                  "Where inside the 30-minute lookback the model draws its signal from.")
+
+        with st.expander("SHAP methodology"):
+            st.markdown(f"""
+**Explainer** — `{sh['explainer']}`
+
+*Why this one:* {sh['explainer_rationale']}
+
+**Aggregation** — {sh['aggregation']}
+
+**Reading the numbers** — a channel's SHAP value is its contribution *for that specific forecast*, in °C,
+relative to the base value ({sh['base_value']:.3f} °C — the average prediction over the explained set).
+Positive pushes the forecast up, negative pushes it down. Unlike permutation importance, which is global
+and model-agnostic, SHAP is per-prediction and exact for this model.
+""")
