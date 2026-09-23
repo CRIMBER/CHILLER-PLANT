@@ -1,0 +1,546 @@
+{
+  "compare_models": [
+    "RandomForest",
+    "LSTM",
+    "BiLSTM"
+  ],
+  "model_colors": {
+    "RandomForest": "#3987e5",
+    "LSTM": "#d95926",
+    "BiLSTM": "#199e70"
+  },
+  "selection_criterion": "validation MAE",
+  "horizon_minutes": 15,
+  "seq_len": 30,
+  "feature_cols": [
+    "CHW-Riser-MainBuilding-ChwSt",
+    "CHW_DeltaT",
+    "Total_Chiller_Power_kW",
+    "Total_CHWP_Power_kW",
+    "Total_CWP_Power_kW",
+    "Total_CT_Power_kW",
+    "Total_Plant_Power_kW",
+    "CW_DeltaT",
+    "Running_Chillers",
+    "WetBulb_Avg",
+    "Hour",
+    "DayOfWeek",
+    "IsWeekend",
+    "CHW-Riser-MainBuilding-ChwRt"
+  ],
+  "split": {
+    "train": 32219,
+    "val": 5686,
+    "test": 6690
+  },
+  "test_date_range": [
+    "2025-12-27 08:29:00",
+    "2025-12-31 23:58:00"
+  ],
+  "metrics": {
+    "RandomForest": {
+      "MAE": 0.04779577689127747,
+      "RMSE": 0.09879897311230842,
+      "R2": 0.9172305903587775,
+      "MedAE": 0.02436995473577941,
+      "P90AE": 0.09565441249639288,
+      "MaxAE": 0.9667170487735195,
+      "Bias": -0.0020792746997446414
+    },
+    "LSTM": {
+      "MAE": 0.05969630926847458,
+      "RMSE": 0.11861795939744763,
+      "R2": 0.8806930184364319,
+      "MedAE": 0.03364753723144531,
+      "P90AE": 0.11411474645137787,
+      "MaxAE": 1.1767358779907227,
+      "Bias": 0.009481612592935562
+    },
+    "BiLSTM": {
+      "MAE": 0.05359898507595062,
+      "RMSE": 0.10369904031420979,
+      "R2": 0.9088168740272522,
+      "MedAE": 0.03250932693481445,
+      "P90AE": 0.10354257375001907,
+      "MaxAE": 1.3602523803710938,
+      "Bias": 0.015399957075715065
+    }
+  },
+  "model_details": {
+    "RandomForest": {
+      "metrics": {
+        "MAE": 0.04779577689127747,
+        "RMSE": 0.09879897311230842,
+        "R2": 0.9172305903587775,
+        "MedAE": 0.02436995473577941,
+        "P90AE": 0.09565441249639288,
+        "MaxAE": 0.9667170487735195,
+        "Bias": -0.0020792746997446414
+      },
+      "config": {
+        "n_estimators": 200,
+        "max_depth": 12,
+        "max_features": "sqrt"
+      },
+      "val_MAE": 0.06297392531563621,
+      "n_params": 574592
+    },
+    "LSTM": {
+      "metrics": {
+        "MAE": 0.05969630926847458,
+        "RMSE": 0.11861795939744763,
+        "R2": 0.8806930184364319,
+        "MedAE": 0.03364753723144531,
+        "P90AE": 0.11411474645137787,
+        "MaxAE": 1.1767358779907227,
+        "Bias": 0.009481612592935562
+      },
+      "n_params": 24769,
+      "val_MAE": 0.07397036254405975,
+      "best_epoch": 1,
+      "epochs_run": 7
+    },
+    "BiLSTM": {
+      "metrics": {
+        "MAE": 0.05359898507595062,
+        "RMSE": 0.10369904031420979,
+        "R2": 0.9088168740272522,
+        "MedAE": 0.03250932693481445,
+        "P90AE": 0.10354257375001907,
+        "MaxAE": 1.3602523803710938,
+        "Bias": 0.015399957075715065
+      },
+      "n_params": 57729,
+      "val_MAE": 0.06912422925233841,
+      "best_epoch": 6,
+      "epochs_run": 12
+    }
+  },
+  "baseline_metrics": {
+    "MAE": 0.04760089889168739,
+    "RMSE": 0.11456312241543867,
+    "R2": 0.8887103796005249,
+    "MedAE": 0.020000457763671875,
+    "P90AE": 0.09999942779541016,
+    "MaxAE": 1.5299997329711914,
+    "Bias": -0.0002855007187463343
+  },
+  "poly_metrics": {
+    "MAE": 0.05340164238142125,
+    "RMSE": 0.10755074102927535,
+    "R2": 0.9019174360056954,
+    "MedAE": 0.0280296986068711,
+    "P90AE": 0.11117913912508544,
+    "MaxAE": 1.4162571914463342,
+    "Bias": -0.0001972805178785917
+  },
+  "pairwise": [
+    {
+      "model_a": "RandomForest",
+      "model_b": "LSTM",
+      "dm_tests": {
+        "squared": {
+          "statistic": -1.6650899565784152,
+          "p_value": 0.09594164162921048,
+          "mean_loss_diff": -0.004308983302912308,
+          "better": "RandomForest",
+          "significant": false
+        },
+        "absolute": {
+          "statistic": -4.525027581714895,
+          "p_value": 6.1431559985614115e-06,
+          "mean_loss_diff": -0.011900533519842207,
+          "better": "RandomForest",
+          "significant": true
+        }
+      },
+      "bootstrap_RMSE": {
+        "observed_diff": -0.019818986208236772,
+        "ci_low": -0.05071355087706602,
+        "ci_high": 0.003968336603642207,
+        "excludes_zero": false
+      },
+      "bootstrap_MAE": {
+        "observed_diff": -0.011900532377197112,
+        "ci_low": -0.02027439204191988,
+        "ci_high": -0.005981175958613061,
+        "excludes_zero": true
+      },
+      "per_metric": {
+        "RMSE": {
+          "value_a": 0.09879897311230842,
+          "value_b": 0.11861795939744763,
+          "winner": "RandomForest",
+          "abs_diff": 0.0198189862851392,
+          "pct_improvement": 16.70825091395533,
+          "significant": false,
+          "dm_significant": false,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(squared) AND bootstrap(RMSE)"
+        },
+        "MAE": {
+          "value_a": 0.04779577689127747,
+          "value_b": 0.05969630926847458,
+          "winner": "RandomForest",
+          "abs_diff": 0.011900532377197112,
+          "pct_improvement": 19.935122494217147,
+          "significant": true,
+          "dm_significant": true,
+          "ci_excludes_zero": true,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "MedAE": {
+          "value_a": 0.02436995473577941,
+          "value_b": 0.03364753723144531,
+          "winner": "RandomForest",
+          "abs_diff": 0.009277582495665904,
+          "pct_improvement": 27.572842647739275,
+          "significant": true,
+          "dm_significant": true,
+          "ci_excludes_zero": true,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "P90AE": {
+          "value_a": 0.09565441249639288,
+          "value_b": 0.11411474645137787,
+          "winner": "RandomForest",
+          "abs_diff": 0.01846033395498499,
+          "pct_improvement": 16.176992482606607,
+          "significant": true,
+          "dm_significant": true,
+          "ci_excludes_zero": true,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "R2": {
+          "value_a": 0.9172305903587775,
+          "value_b": 0.8806930184364319,
+          "winner": "RandomForest",
+          "abs_diff": 0.036537571922345635,
+          "pct_improvement": 4.148729597881206,
+          "significant": false,
+          "dm_significant": false,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(squared) AND bootstrap(RMSE)"
+        }
+      },
+      "significant_wins_a": 3,
+      "significant_wins_b": 0,
+      "significant_metrics_a": [
+        "MAE",
+        "MedAE",
+        "P90AE"
+      ],
+      "significant_metrics_b": [],
+      "verdict": "RandomForest better on MAE, MedAE, P90AE (not significant on the rest)"
+    },
+    {
+      "model_a": "RandomForest",
+      "model_b": "BiLSTM",
+      "dm_tests": {
+        "squared": {
+          "statistic": -0.5756296742727263,
+          "p_value": 0.564884883001378,
+          "mean_loss_diff": -0.0009922544663990346,
+          "better": "RandomForest",
+          "significant": false
+        },
+        "absolute": {
+          "statistic": -3.0551655821315,
+          "p_value": 0.002258222893049888,
+          "mean_loss_diff": -0.005803207226900464,
+          "better": "RandomForest",
+          "significant": true
+        }
+      },
+      "bootstrap_RMSE": {
+        "observed_diff": -0.004900070280826646,
+        "ci_low": -0.025463390186514574,
+        "ci_high": 0.014409170302908128,
+        "excludes_zero": false
+      },
+      "bootstrap_MAE": {
+        "observed_diff": -0.005803208184673156,
+        "ci_low": -0.010685408567763762,
+        "ci_high": -0.00031150301142942227,
+        "excludes_zero": true
+      },
+      "per_metric": {
+        "RMSE": {
+          "value_a": 0.09879897311230842,
+          "value_b": 0.10369904031420979,
+          "winner": "RandomForest",
+          "abs_diff": 0.004900067201901365,
+          "pct_improvement": 4.725277289986562,
+          "significant": false,
+          "dm_significant": false,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(squared) AND bootstrap(RMSE)"
+        },
+        "MAE": {
+          "value_a": 0.04779577689127747,
+          "value_b": 0.05359898507595062,
+          "winner": "RandomForest",
+          "abs_diff": 0.005803208184673156,
+          "pct_improvement": 10.827085954052892,
+          "significant": true,
+          "dm_significant": true,
+          "ci_excludes_zero": true,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "MedAE": {
+          "value_a": 0.02436995473577941,
+          "value_b": 0.03250932693481445,
+          "winner": "RandomForest",
+          "abs_diff": 0.008139372199035044,
+          "pct_improvement": 25.037036956672694,
+          "significant": true,
+          "dm_significant": true,
+          "ci_excludes_zero": true,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "P90AE": {
+          "value_a": 0.09565441249639288,
+          "value_b": 0.10354257375001907,
+          "winner": "RandomForest",
+          "abs_diff": 0.007888161253626194,
+          "pct_improvement": 7.618278132307621,
+          "significant": true,
+          "dm_significant": true,
+          "ci_excludes_zero": true,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "R2": {
+          "value_a": 0.9172305903587775,
+          "value_b": 0.9088168740272522,
+          "winner": "RandomForest",
+          "abs_diff": 0.008413716331525323,
+          "pct_improvement": 0.9257878646378461,
+          "significant": false,
+          "dm_significant": false,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(squared) AND bootstrap(RMSE)"
+        }
+      },
+      "significant_wins_a": 3,
+      "significant_wins_b": 0,
+      "significant_metrics_a": [
+        "MAE",
+        "MedAE",
+        "P90AE"
+      ],
+      "significant_metrics_b": [],
+      "verdict": "RandomForest better on MAE, MedAE, P90AE (not significant on the rest)"
+    },
+    {
+      "model_a": "LSTM",
+      "model_b": "BiLSTM",
+      "dm_tests": {
+        "squared": {
+          "statistic": 1.7190750763669715,
+          "p_value": 0.08564696877838696,
+          "mean_loss_diff": 0.00331672839820385,
+          "better": "BiLSTM",
+          "significant": false
+        },
+        "absolute": {
+          "statistic": 2.3014611646478964,
+          "p_value": 0.021396166903071334,
+          "mean_loss_diff": 0.006097326520830393,
+          "better": "BiLSTM",
+          "significant": true
+        }
+      },
+      "bootstrap_RMSE": {
+        "observed_diff": 0.014918915927410126,
+        "ci_low": -0.0045411989092826845,
+        "ci_high": 0.03338474202901124,
+        "excludes_zero": false
+      },
+      "bootstrap_MAE": {
+        "observed_diff": 0.006097324192523956,
+        "ci_low": -0.00028031188994646065,
+        "ci_high": 0.013762307912111282,
+        "excludes_zero": false
+      },
+      "per_metric": {
+        "RMSE": {
+          "value_a": 0.11861795939744763,
+          "value_b": 0.10369904031420979,
+          "winner": "BiLSTM",
+          "abs_diff": 0.014918919083237836,
+          "pct_improvement": 12.577285226472085,
+          "significant": false,
+          "dm_significant": false,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(squared) AND bootstrap(RMSE)"
+        },
+        "MAE": {
+          "value_a": 0.05969630926847458,
+          "value_b": 0.05359898507595062,
+          "winner": "BiLSTM",
+          "abs_diff": 0.006097324192523956,
+          "pct_improvement": 10.21390479116928,
+          "significant": false,
+          "dm_significant": true,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "MedAE": {
+          "value_a": 0.03364753723144531,
+          "value_b": 0.03250932693481445,
+          "winner": "BiLSTM",
+          "abs_diff": 0.0011382102966308594,
+          "pct_improvement": 3.382744742361544,
+          "significant": false,
+          "dm_significant": true,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "P90AE": {
+          "value_a": 0.11411474645137787,
+          "value_b": 0.10354257375001907,
+          "winner": "BiLSTM",
+          "abs_diff": 0.010572172701358795,
+          "pct_improvement": 9.264510530077196,
+          "significant": false,
+          "dm_significant": true,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(absolute) AND bootstrap(MAE)"
+        },
+        "R2": {
+          "value_a": 0.8806930184364319,
+          "value_b": 0.9088168740272522,
+          "winner": "BiLSTM",
+          "abs_diff": 0.028123855590820312,
+          "pct_improvement": 3.1933778288319976,
+          "significant": false,
+          "dm_significant": false,
+          "ci_excludes_zero": false,
+          "significance_source": "DM(squared) AND bootstrap(RMSE)"
+        }
+      },
+      "significant_wins_a": 0,
+      "significant_wins_b": 0,
+      "significant_metrics_a": [],
+      "significant_metrics_b": [],
+      "verdict": "no significant difference on any metric"
+    }
+  ],
+  "statistics_note": {
+    "dm_test": "Diebold-Mariano with Newey-West HAC variance (Bartlett kernel, lag=14) and Harvey-Leybourne-Newbold correction.",
+    "bootstrap": "Moving-block bootstrap, block=60 rows (1 h), B=2000, alpha=0.05.",
+    "why": "Overlapping 15-min-ahead forecasts are strongly autocorrelated; iid standard errors would overstate significance."
+  },
+  "test_errors": {
+    "RandomForest": "[ 0.02040253  0.01262892  0.00744601 ... -0.00853022 -0.01329227\n  0.00049336]",
+    "LSTM": "[0.08172321 0.07023716 0.06883812 ... 0.01037693 0.01138306 0.01263332]",
+    "BiLSTM": "[0.03534698 0.02440643 0.02221012 ... 0.03513813 0.03977871 0.04383659]"
+  },
+  "shap": {
+    "available": true,
+    "model": "BiLSTM",
+    "explainer": "shap.GradientExplainer (expected gradients)",
+    "explainer_rationale": "DeepExplainer has no DeepLIFT rule for LSTM gates; KernelExplainer on 420 inputs is intractable. GradientExplainer is valid and feasible.",
+    "aggregation": "SHAP values summed over the 30 timesteps per channel; additivity is preserved so sum(phi)+base = prediction.",
+    "units": "deg C contribution to the 15-minute-ahead CHR forecast",
+    "n_explained": 256,
+    "n_background": 100,
+    "nsamples": 100,
+    "base_value": 12.532616454994441,
+    "feature_names": [
+      "CHW-Riser-MainBuilding-ChwSt",
+      "CHW_DeltaT",
+      "Total_Chiller_Power_kW",
+      "Total_CHWP_Power_kW",
+      "Total_CWP_Power_kW",
+      "Total_CT_Power_kW",
+      "Total_Plant_Power_kW",
+      "CW_DeltaT",
+      "Running_Chillers",
+      "WetBulb_Avg",
+      "Hour",
+      "DayOfWeek",
+      "IsWeekend",
+      "CHW-Riser-MainBuilding-ChwRt"
+    ],
+    "mean_abs_shap": [
+      0.014269051664450565,
+      0.08308405378802572,
+      0.005619869309067378,
+      0.012288271736950941,
+      0.08177989664165286,
+      0.010789018343987098,
+      0.0073115039389895385,
+      0.03132707684425672,
+      0.022449643353918268,
+      0.009815553795529295,
+      0.02288467431634616,
+      0.008932924422734774,
+      0.0067889383167569406,
+      0.08252294302435341
+    ],
+    "ranking": [
+      "CHW_DeltaT",
+      "CHW-Riser-MainBuilding-ChwRt",
+      "Total_CWP_Power_kW",
+      "CW_DeltaT",
+      "Hour",
+      "Running_Chillers",
+      "CHW-Riser-MainBuilding-ChwSt",
+      "Total_CHWP_Power_kW",
+      "Total_CT_Power_kW",
+      "WetBulb_Avg",
+      "DayOfWeek",
+      "Total_Plant_Power_kW",
+      "IsWeekend",
+      "Total_Chiller_Power_kW"
+    ],
+    "plots": [
+      "plot_shap_beeswarm.png",
+      "plot_shap_bar.png",
+      "plot_shap_violin.png",
+      "plot_shap_layered_violin.png",
+      "plot_shap_heatmap.png",
+      "plot_shap_dependence_1_chw_deltat.png",
+      "plot_shap_dependence_2_chw_riser_mainbuilding_chwrt.png",
+      "plot_shap_dependence_3_total_cwp_power_kw.png",
+      "plot_shap_dependence_4_cw_deltat.png",
+      "plot_shap_force_single.png",
+      "plot_shap_waterfall.png",
+      "plot_shap_temporal.png"
+    ],
+    "data": "[[7.57000e+00 4.99000e+00 1.30240e+03 ... 5.00000e+00 1.00000e+00\n  1.25600e+01]\n [7.56000e+00 5.03000e+00 1.31723e+03 ... 5.00000e+00 1.00000e+00\n  1.25900e+01]\n [7.58000e+00 5.04000e+00 1.32101e+03 ... 5.00000e+00 1.00000e+00\n  1.26200e+01]\n ...\n [7.59000e+00 4.98000e+00 1.25303e+03 ... 2.00000e+00 0.00000e+00\n  1.25700e+01]\n [7.58000e+00 4.93000e+00 1.24515e+03 ... 2.00000e+00 0.00000e+00\n  1.25100e+01]\n [7.61000e+00 4.88000e+00 1.23296e+03 ... 2.00000e+00 0.00000e+00\n  1.24900e+01]]",
+    "temporal_abs": [
+      0.000648539361781432,
+      0.000641277430465939,
+      0.0006077628762416716,
+      0.0005688477573696487,
+      0.0005315539159239684,
+      0.0005118344176472658,
+      0.0004881693428735043,
+      0.00048507699673142675,
+      0.0004920807955404257,
+      0.00047399354893958376,
+      0.00047154150722389013,
+      0.0005196274883908817,
+      0.0005693010556273992,
+      0.000617427202960528,
+      0.0006902407366115166,
+      0.0007831920557630353,
+      0.0008668076551130382,
+      0.0009840918071453292,
+      0.0011840428054470554,
+      0.001428859765896478,
+      0.001632304750094191,
+      0.0019290822735746353,
+      0.0023351830932750424,
+      0.0028862041798411488,
+      0.0038924230530557437,
+      0.0051473149921680015,
+      0.006917661115338029,
+      0.009370030417654286,
+      0.01365001790497501,
+      0.023238796166726854
+    ]
+  }
+}
